@@ -7,12 +7,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
         // get reference to the views
         etResponse = (EditText) findViewById(R.id.etResponse);
 
-        // call AsynTask to perform network operation on separate thread
+        // call AsyncTask to perform network operation on separate thread
         new HttpAsyncTask().execute("http://10.0.2.2:3000/api/v1/tasks");
     }
 
@@ -98,17 +100,38 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
+    private class HttpAsyncTask extends AsyncTask<String, Void, String[]> {
 
-            return GET(urls[0]);
+        @Override
+        protected String[] doInBackground(String... urls) {
+
+            try {
+                return getTasksFromJson(GET(urls[0]));
+            } catch (JSONException e) {
+                Log.e("HttpAsyncTask", e.getMessage(), e);
+                e.printStackTrace();
+            }
+            return null;
         }
         // onPostExecute displays the results of the AsyncTask.
         @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(getBaseContext(), "Received!", Toast.LENGTH_LONG).show();
-            etResponse.setText(result);
+        protected void onPostExecute(String[] result) {
+            etResponse.setText(result[0]);
+        }
+
+        private String[] getTasksFromJson(String json)
+                throws JSONException {
+
+            JSONObject tasksJson = new JSONObject(json);
+            JSONArray tasksArray = tasksJson.getJSONArray("tasks");
+
+            String[] resultStrs = new String[tasksArray.length()];
+            for(int i = 0; i < tasksArray.length(); i++) {
+                resultStrs[i] = tasksArray.getJSONObject(i).getString("name");
+            }
+
+            return resultStrs;
+
         }
     }
 }
