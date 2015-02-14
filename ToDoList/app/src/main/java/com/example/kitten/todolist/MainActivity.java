@@ -6,7 +6,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -20,22 +21,29 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    EditText etResponse;
+    ListView listView;
+    private ArrayAdapter arrayAdapter;
+    String [] toDoListArray = new String[0];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // get reference to the views
-        etResponse = (EditText) findViewById(R.id.etResponse);
-
         // call AsyncTask to perform network operation on separate thread
         new HttpAsyncTask().execute("http://10.0.2.2:3000/api/v1/tasks");
+
+        List<String> toDoList = new ArrayList<String>(Arrays.asList(toDoListArray));
+        arrayAdapter = new ArrayAdapter<String>(this, R.layout.activity_main, R.id.to_do_list_item_textView, toDoList);
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(arrayAdapter);
     }
 
 
@@ -65,7 +73,6 @@ public class MainActivity extends ActionBarActivity {
         InputStream inputStream = null;
         String result = "";
         try {
-
             // create HttpClient
             HttpClient httpclient = new DefaultHttpClient();
 
@@ -97,7 +104,6 @@ public class MainActivity extends ActionBarActivity {
 
         inputStream.close();
         return result;
-
     }
 
     private class HttpAsyncTask extends AsyncTask<String, Void, String[]> {
@@ -116,7 +122,12 @@ public class MainActivity extends ActionBarActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String[] result) {
-            etResponse.setText(result[0]);
+            if (result != null) {
+                arrayAdapter.clear();
+                for (String task : result) {
+                    arrayAdapter.add(task);
+                }
+            }
         }
 
         private String[] getTasksFromJson(String json)
