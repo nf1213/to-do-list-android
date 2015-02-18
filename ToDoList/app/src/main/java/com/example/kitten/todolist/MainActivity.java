@@ -30,7 +30,7 @@ public class MainActivity extends ActionBarActivity {
 
     ListView listView;
     private ArrayAdapter arrayAdapter;
-    String [] toDoListArray = new String[0];
+    String [] toDoListArray = {""};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         new HttpAsyncTask().execute("http://10.0.2.2:3000/api/v1/tasks");
 
         List<String> toDoList = new ArrayList<String>(Arrays.asList(toDoListArray));
-        arrayAdapter = new ArrayAdapter<String>(this, R.layout.activity_main, R.id.to_do_list_item_textView, toDoList);
+        arrayAdapter = new ArrayAdapter<String>(MainActivity.this, R.layout.to_do_list_item, R.id.to_do_list_item_textView, toDoList);
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(arrayAdapter);
     }
@@ -101,7 +101,6 @@ public class MainActivity extends ActionBarActivity {
         String result = "";
         while((line = bufferedReader.readLine()) != null)
             result += line;
-
         inputStream.close();
         return result;
     }
@@ -110,7 +109,6 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected String[] doInBackground(String... urls) {
-
             try {
                 return getTasksFromJson(GET(urls[0]));
             } catch (JSONException e) {
