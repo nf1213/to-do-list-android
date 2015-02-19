@@ -10,9 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,6 +97,22 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return result;
+    }
+
+    public static void POST(String ur, String data) {
+        try {
+            // create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+
+            HttpPost post = new HttpPost(url);
+
+            List<NameValuePair> postParams = new ArrayList<NameValuePair>(2);
+            postParams.add(new BasicNameValuePair("name", data));
+
+            post.setEntity(new UrlEncodedFormEntity(postParams));
+        } catch (Exception e) {
+            Log.d("PostRequest", e.getLocalizedMessage());
+        }
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
