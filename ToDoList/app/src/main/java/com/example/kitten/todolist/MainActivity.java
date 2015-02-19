@@ -99,7 +99,7 @@ public class MainActivity extends ActionBarActivity {
         return result;
     }
 
-    public static void POST(String ur, String data) {
+    public static void POST(String url, String data) {
         try {
             // create HttpClient
             HttpClient httpclient = new DefaultHttpClient();
