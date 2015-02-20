@@ -76,7 +76,7 @@ public class NewTaskActivity extends ActionBarActivity {
             HttpPost post = new HttpPost(url);
 
             List<NameValuePair> postParams = new ArrayList<NameValuePair>(2);
-            postParams.add(new BasicNameValuePair("name", data));
+            postParams.add(new BasicNameValuePair("task[name]", data));
 
             post.setEntity(new UrlEncodedFormEntity(postParams));
 
