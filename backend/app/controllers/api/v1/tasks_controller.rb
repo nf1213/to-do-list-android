@@ -6,7 +6,7 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def create
-    @task = tasks.build(task_params)
+    @task = tasks.build(params[:name])
 
     if @task.save
       render json: @task,
@@ -15,11 +15,5 @@ class Api::V1::TasksController < ApplicationController
     else
       render json: { errors: @task.errors }, status: :unprocessable_entity
     end
-  end
-
-  private
-
-  def task_params
-    params.require(:task).include(:name)
   end
 end

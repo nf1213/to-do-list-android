@@ -1,11 +1,15 @@
 package com.example.kitten.todolist;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import org.apache.http.NameValuePair;
@@ -22,6 +26,7 @@ import java.util.List;
 public class NewTaskActivity extends ActionBarActivity {
 
     EditText inputField;
+    Button submitButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +34,14 @@ public class NewTaskActivity extends ActionBarActivity {
         setContentView(R.layout.activity_new_task);
 
         inputField = (EditText) findViewById(R.id.task_name_input_field);
+        submitButton = (Button) findViewById(R.id.submit_button);
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new HttpPostAsyncTask(NewTaskActivity.this).execute("http://10.0.2.2:3000/api/v1/tasks");
+            }
+        });
     }
 
 
@@ -71,7 +84,10 @@ public class NewTaskActivity extends ActionBarActivity {
     }
 
     private class HttpPostAsyncTask extends AsyncTask<String, Void, Void> {
-
+        Context context;
+        private HttpPostAsyncTask(Context context) {
+            this.context = context.getApplicationContext();
+        }
         @Override
         protected Void doInBackground(String... urls) {
             try {
@@ -86,7 +102,10 @@ public class NewTaskActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+
         }
     }
 }
