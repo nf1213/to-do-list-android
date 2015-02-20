@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -78,6 +79,8 @@ public class NewTaskActivity extends ActionBarActivity {
             postParams.add(new BasicNameValuePair("name", data));
 
             post.setEntity(new UrlEncodedFormEntity(postParams));
+
+            HttpResponse response = httpclient.execute(post);
         } catch (Exception e) {
             Log.d("PostRequest", e.getLocalizedMessage());
         }

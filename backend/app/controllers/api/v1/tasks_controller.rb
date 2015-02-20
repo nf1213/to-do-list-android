@@ -6,14 +6,18 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def create
-    @task = tasks.build(params[:name])
+    @task = Task.new(name: params[:name])
 
     if @task.save
-      render json: @task,
-        status: :created,
-        location: [:api, :v1, @task]
+
     else
-      render json: { errors: @task.errors }, status: :unprocessable_entity
+      render json: { errors: @task.errors }, status: 422
     end
+  end
+
+  private
+
+  def task_params
+    params.require(:task).permit(:name)
   end
 end
